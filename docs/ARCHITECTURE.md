@@ -1,31 +1,31 @@
-# Architecture overview
+# Architecture
 
-The application is organized as a desktop orchestrator plus independent worker scripts.
+## Desktop orchestrator
+`app/main.py` is the operator entry point. It launches independent worker
+processes and streams their output into the GUI. This reflects the original
+production design while removing absolute `C:\...` script paths.
 
-## 1. Desktop control panel
+## Configuration
+Machine-specific directories live in `config.json`, which is ignored by Git.
+`config.example.json` documents the required keys. `common/config.py` exposes
+paths to worker modules.
 
-The PySide2 interface acts as the operator entry point. It starts worker processes and displays their stdout/stderr and execution state.
+## Content collection
+The three scraper workers are source-derived from the production batch,
+continuation and single-article flows. Their existing parsing and staging
+formats are retained; hard-coded workstation paths are replaced by config.
 
-## 2. Content collection
+## Spreadsheet workflow
+The production workflow uses section-specific Excel planning sheets and
+intermediate staging files. `create_issue_folder.py` prepares a new issue;
+the `fill_*` workers retain the production workbook layout.
 
-Selenium / BeautifulSoup workers collect article content in batch or single-item mode. Content is classified into regional / editorial sections and written to intermediate working files used by later stages.
+## Image workflow
+Image workers collect source photos from archive subfolders, stage selected
+files for external processing, restore processed output and optionally rename
+images from spreadsheet metadata.
 
-## 3. Issue and spreadsheet preparation
-
-Issue-folder utilities create the working directory for a new publication issue. Spreadsheet workers use pandas / openpyxl to populate planning sheets for individual sections.
-
-## 4. Image preparation
-
-Image utilities copy source images into issue-specific working directories, prepare selected images for external processing and copy processed results back into the publishing workflow.
-
-## 5. Document processing
-
-The document pipeline converts ODT source documents into RTF and validates / extracts RTF text for downstream editorial use. OpenOffice is treated as an external application dependency rather than being bundled with the project.
-
-## Refactoring goals for the public repository
-
-- Replace hard-coded Windows paths with `config.json`.
-- Use relative paths between Python modules.
-- Keep credentials, cookies, browser profiles and local content out of Git.
-- Consolidate historical script versions into one maintained implementation per function.
-- Gradually add tests around path handling and data-transformation logic.
+## Document workflow
+RTF extraction is refactored from the production utility. ODT conversion is
+performed by a portable OpenOffice CLI wrapper because the separately stored
+original converter was not included in the source archive.

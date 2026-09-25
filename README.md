@@ -1,59 +1,72 @@
 # Publishing Workflow Automation
 
-A Windows desktop automation toolkit written in Python for supporting a local publishing workflow.
+A Python desktop toolkit built around a real local-publishing workflow. The
+application combines a PySide2 control panel with independent workers for
+collecting article content, preparing issue folders and Excel planning
+sheets, organizing publication images, and processing ODT/RTF documents.
 
-The project combines a PySide2 control panel with separate processing modules for collecting article content, preparing issue folders, generating and updating Excel planning sheets, organizing images, and converting editorial documents from ODT to RTF.
+## What the project automates
 
-## Main capabilities
+- **Article collection** – batch, continuation and single-article scraping
+  using Selenium / BeautifulSoup.
+- **Regional workflow** – one workflow for several editorial sections and
+  municipalities.
+- **Excel planning sheets** – issue-folder preparation and population of
+  section-specific spreadsheets.
+- **Image workflow** – collect source images from archive subdirectories,
+  stage selected images for processing, restore processed output and rename
+  images from spreadsheet data.
+- **ODT / RTF processing** – batch ODT-to-RTF conversion through OpenOffice
+  plus RTF validation/text extraction.
+- **Process orchestration** – the desktop GUI starts workers as independent
+  Python processes and displays stdout/stderr.
 
-- **Content collection** – batch and single-article scraping workflows using Selenium and BeautifulSoup.
-- **Regional workflow** – processing content for multiple local sections / municipalities from one desktop interface.
-- **Spreadsheet automation** – creation and population of Excel planning sheets used to organize issue content.
-- **Image workflow** – collecting, selecting, copying and preparing images from source folders for publication.
-- **Document processing** – ODT-to-RTF conversion, RTF validation and text extraction.
-- **Process orchestration** – a PySide2 GUI starts individual Python workers as independent processes and reports their status.
-
-## Project structure
+## Structure
 
 ```text
-publishing-workflow-automation/
-├── app/             # desktop GUI and orchestration
-├── scrapers/        # article/content collection
-├── spreadsheets/    # Excel planning-sheet automation
-├── images/          # image collection and preparation
-├── documents/       # ODT/RTF processing
-├── docs/            # architecture and workflow notes
-├── config.example.json
-├── requirements.txt
-└── .gitignore
+app/             desktop control panel
+common/          shared configuration
+scrapers/        article collection workers
+spreadsheets/    issue / Excel automation
+images/          image collection and preparation
+documents/       ODT / RTF utilities
+docs/            architecture and migration notes
 ```
 
 ## Technology
 
-Python, PySide2, Selenium, BeautifulSoup, pandas, openpyxl, Pillow, requests and striprtf.
-
-The ODT/RTF workflow also integrates with a locally installed OpenOffice installation on Windows.
-
-## Status
-
-This repository is a cleaned and reorganized version of a production-use personal automation toolkit. The original scripts evolved over time around a real editorial workflow; the public repository is being refactored to remove machine-specific paths and separate configuration from application logic.
+Python, PySide2, Selenium, BeautifulSoup, openpyxl, pandas, Pillow,
+requests, pyautogui and striprtf. OpenOffice is used as an external
+dependency for ODT-to-RTF conversion.
 
 ## Setup
 
-1. Create and activate a Python virtual environment.
-2. Install dependencies:
-
 ```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+Copy-Item config.example.json config.json
+python app\main.py
 ```
 
-3. Copy `config.example.json` to `config.json` and adjust paths for the local machine.
-4. Install OpenOffice if ODT-to-RTF conversion is required.
-5. Configure a compatible Chrome / ChromeDriver setup for Selenium-based collection modules.
+Edit `config.json` and point it to your own workspace, issue output,
+template, image archive, ChromeDriver and OpenOffice locations.
 
-## Privacy and repository hygiene
+## Public-repository note
 
-Local publishing data, generated documents, images, browser profiles, cookies and machine-specific configuration are intentionally excluded from version control.
+This is a cleaned and reorganized portfolio version of a production-use
+personal automation toolkit. Local publishing data, spreadsheet templates,
+images, cookies, browser profiles, credentials and machine-specific paths
+are intentionally excluded from version control.
+
+The production launcher referenced an external `odt_to_rtf_gui.py` that was
+not present in the supplied source archive. `documents/odt_to_rtf.py` is a
+clean portable OpenOffice conversion layer; publication-specific template or
+style mapping from that external converter is not claimed to be reproduced.
+
+Some worker modules intentionally retain the source workflow's staging-file
+format to document the real migration path from production scripts to a
+maintainable package.
 
 ## Author
 

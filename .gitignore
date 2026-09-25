@@ -1,24 +1,18 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 
-# Virtual environments
+# Virtual environments / IDE
 .venv/
 venv/
 env/
-ENV/
-
-# IDE / editor
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Local configuration / secrets
+# Local config / secrets
 config.json
 .env
 .env.*
@@ -28,14 +22,13 @@ config.json
 *.p12
 *.pfx
 
-# Runtime data and logs
-*.log
-logs/
-tmp/
-temp/
-output/
+# Browser state and credentials
+cookies*.json
+cookies*.pkl
+chrome_profile*/
+user-data-dir/
 
-# Local publishing data / generated files
+# Local publishing data / generated assets
 *.odt
 *.rtf
 *.ott
@@ -52,17 +45,14 @@ output/
 *.txt
 !README.md
 !docs/*.md
+output/
+tmp/
+temp/
+logs/
+*.log
 
-# Browser / Selenium profiles and cookies
-cookies*.json
-cookies*.pkl
-chrome_profile*/
-user-data-dir/
-
-# OS
+# Archives / OS
+*.zip
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Local archives
-*.zip
