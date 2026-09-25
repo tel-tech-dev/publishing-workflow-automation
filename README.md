@@ -1,73 +1,159 @@
 # Publishing Workflow Automation
 
-A Python desktop toolkit built around a real local-publishing workflow. The
-application combines a PySide2 control panel with independent workers for
-collecting article content, preparing issue folders and Excel planning
-sheets, organizing publication images, and processing ODT/RTF documents.
+A Python desktop application that coordinates a multi-step local publishing workflow: article collection, spreadsheet preparation, image handling, and document conversion.
 
-## What the project automates
+This repository is a cleaned and portable public version of a real internal workflow tool. Machine-specific paths, credentials, private data, and environment-specific settings have been removed or moved to configuration.
 
-- **Article collection** – batch, continuation and single-article scraping
-  using Selenium / BeautifulSoup.
-- **Regional workflow** – one workflow for several editorial sections and
-  municipalities.
-- **Excel planning sheets** – issue-folder preparation and population of
-  section-specific spreadsheets.
-- **Image workflow** – collect source images from archive subdirectories,
-  stage selected images for processing, restore processed output and rename
-  images from spreadsheet data.
-- **ODT / RTF processing** – batch ODT-to-RTF conversion through OpenOffice
-  plus RTF validation/text extraction.
-- **Process orchestration** – the desktop GUI starts workers as independent
-  Python processes and displays stdout/stderr.
+## What the project does
 
-## Structure
+The application acts as a desktop control panel for several independent Python modules used during preparation of a local publication.
+
+Main workflow areas include:
+
+- collecting article content in batch or one article at a time,
+- processing content for multiple regional sections,
+- creating issue folders and preparing spreadsheet-based schedules,
+- filling schedules with article data,
+- collecting and organizing source images,
+- preparing images for further processing,
+- restoring processed images to the publication workflow,
+- converting ODT documents to RTF,
+- validating and extracting content from RTF files,
+- launching individual workflow modules from a PySide2 desktop interface.
+
+## Architecture
+
+The project is split into small modules grouped by responsibility:
 
 ```text
-app/             desktop control panel
-common/          shared configuration
-scrapers/        article collection workers
-spreadsheets/    issue / Excel automation
-images/          image collection and preparation
-documents/       ODT / RTF utilities
-docs/            architecture and migration notes
+publishing-workflow-automation/
+├── app/
+│   └── main.py
+├── common/
+│   ├── __init__.py
+│   └── config.py
+├── scrapers/
+│   ├── article_scraper.py
+│   ├── article_scraper_continuation.py
+│   └── single_article_scraper.py
+├── spreadsheets/
+│   ├── create_issue_folder.py
+│   ├── fill_schedule_single.py
+│   ├── fill_schedules.py
+│   └── fill_schedules_continuation.py
+├── images/
+│   ├── collect_source_photos.py
+│   ├── prepare_photos_for_processing.py
+│   ├── rename_photos.py
+│   └── restore_processed_photos.py
+├── documents/
+│   ├── odt_to_rtf.py
+│   └── rtf_check.py
+├── tests/
+│   └── test_config_example.py
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── MIGRATION.md
+│   └── SECURITY.md
+├── config.example.json
+├── requirements.txt
+└── README.md
 ```
+
+The GUI launcher starts individual modules as separate processes. This keeps the workflow modular and allows individual tools to be executed or developed independently.
 
 ## Technology
 
-Python, PySide2, Selenium, BeautifulSoup, openpyxl, pandas, Pillow,
-requests, pyautogui and striprtf. OpenOffice is used as an external
-dependency for ODT-to-RTF conversion.
+- Python
+- PySide2
+- subprocess / QProcess based module orchestration
+- file and directory processing
+- web-content processing
+- spreadsheet workflow automation
+- OpenOffice-based ODT to RTF conversion
+- JSON configuration
+- Git / GitHub
 
-## Setup
+## Configuration
 
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-Copy-Item config.example.json config.json
-python app\main.py
+The original application contained workstation-specific paths. The public version uses configuration instead.
+
+Copy:
+
+```text
+config.example.json
 ```
 
-Edit `config.json` and point it to your own workspace, issue output,
-template, image archive, ChromeDriver and OpenOffice locations.
+to:
 
-## Public-repository note
+```text
+config.json
+```
 
-This is a cleaned and reorganized portfolio version of a production-use
-personal automation toolkit. Local publishing data, spreadsheet templates,
-images, cookies, browser profiles, credentials and machine-specific paths
-are intentionally excluded from version control.
+and adjust the paths for your environment.
 
-The production launcher referenced an external `odt_to_rtf_gui.py` that was
-not present in the supplied source archive. `documents/odt_to_rtf.py` is a
-clean portable OpenOffice conversion layer; publication-specific template or
-style mapping from that external converter is not claimed to be reproduced.
+`config.json` is intentionally excluded from Git so local configuration is not committed.
 
-Some worker modules intentionally retain the source workflow's staging-file
-format to document the real migration path from production scripts to a
-maintainable package.
+## Installation
 
-## Author
+Create a virtual environment:
 
-Adam Jagodzinski / TEL-TECH
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```powershell
+pip install -r requirements.txt
+```
+
+Copy and edit the configuration file:
+
+```powershell
+Copy-Item config.example.json config.json
+```
+
+Run the application:
+
+```powershell
+python app/main.py
+```
+
+Some document-conversion functionality requires a local OpenOffice installation.
+
+## Security
+
+The public repository does not contain production credentials, API keys, passwords, private publishing data, or workstation-specific user paths.
+
+See:
+
+```text
+docs/SECURITY.md
+```
+
+for additional notes.
+
+## Background
+
+The project evolved from a collection of separate Python utilities used to automate repetitive editorial and publishing operations. The current structure consolidates those tools into a clearer modular application with shared configuration and documentation.
+
+The goal of this public version is to demonstrate practical Python automation, process orchestration, file processing, workflow design, and maintenance of a multi-module desktop application.
+
+## Development
+
+Example Git workflow used for this repository:
+
+```powershell
+git switch -c feature-name
+git add .
+git commit -m "Describe the change"
+git switch main
+git merge feature-name
+git push
+```
+
+## License
+
+This repository is provided as a portfolio and demonstration project. Third-party content, private publication data, credentials, and proprietary templates are not included.
