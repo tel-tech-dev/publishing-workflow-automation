@@ -1,0 +1,8 @@
+{
+  "workspace_dir": "C:/PublishingWorkflow/workspace",
+  "issue_output_dir": "C:/PublishingWorkflow/issues",
+  "photo_archive_dir": "C:/PublishingWorkflow/photo-archive",
+  "chromedriver_path": "C:/Tools/chromedriver/chromedriver.exe",
+  "openoffice_path": "C:/Program Files (x86)/OpenOffice 4/program/soffice.exe",
+  "odt_template_path": "C:/PublishingWorkflow/templates/example.ott"
+}
